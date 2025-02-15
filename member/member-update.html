@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원정보 수정</title>
+    <link rel="stylesheet" href="member-update.css" />
+  </head>
+  <body>
+    <header>
+      <h1>아무 말 대잔치</h1>
+      <div class="profile-image">
+        <img src="../photo/profile_mumu.jpeg" alt="profile" />
+      </div>
+    </header>
+
+    <div class="update-container">
+      <h2>회원정보수정</h2>
+      <form id="signupForm">
+        <!-- 프로필 사진 -->
+        <div class="input-group">
+          <label for="profile-image">프로필 사진 *</label>
+          <div class="image-container">
+            <div class="image-preview" id="imagePreview">
+              <img id="previewImg" src="../photo/profile_mumu.jpeg" alt="profile" />
+              <div class="image-overlay">
+                <span class="change-text">변경</span>
+              </div>
+            </div>
+          </div>
+          <input type="file" id="profile-image" accept="image/*" required />
+        </div>
+
+        <!-- 이메일 -->
+        <div class="input-group">
+          <label for="email">이메일</label>
+          <p>psongchoon@kakao.com</p>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="input-group">
+          <label for="nickname">닉네임</label>
+          <input
+            type="text"
+            id="nickname"
+            placeholder="닉네임을 입력하세요"
+            required
+          />
+          <p class="helper-text">* helper text</p>
+        </div>
+
+        <button type="submit" class="update-btn">수정하기</button>
+      </form>
+
+      <button class="withdrawl-btn">
+        회원탈퇴
+      </button>
+  </body>
+</html>
