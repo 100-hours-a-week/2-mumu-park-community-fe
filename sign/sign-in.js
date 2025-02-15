@@ -1,4 +1,3 @@
-// 이메일 유효성 검사 함수
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
   return emailRegex.test(email);
@@ -10,7 +9,6 @@ function checkEmptyPassword(password) {
   }
 }
 
-// 비밀번호 유효성 검사 함수
 function checkPasswordFormat(password) {
   // 비밀번호 조건: 8자 이상, 20자 이하
   if (password.length < 8 || password.length > 20) return false;
@@ -31,7 +29,6 @@ function checkExistUser(email, password) {
   );
 }
 
-// 폼 제출 처리
 document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -41,7 +38,8 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 
   // 이메일 검증
   if (!validateEmail(email)) {
-    helperText.textContent = "* 올바른 이메일 주소를 입력해주세요.";
+    helperText.textContent =
+      "* 올바른 이메일 주소를 입력해주세요. (예: example@example.com)";
     helperText.style.display = "block";
     return;
   }
