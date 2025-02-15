@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입</title>
+    <link rel="stylesheet" href="sign-up.css" />
+  </head>
+  <body>
+    <header>
+      <button
+        type="button"
+        class="back-button"
+        onclick="window.location.href='sign-in.html'"
+      >
+        &lt;
+      </button>
+      <h1>아무 말 대잔치</h1>
+    </header>
+
+    <div class="signup-container">
+      <h2>회원가입</h2>
+      <form id="signupForm">
+        <!-- 프로필 사진 -->
+        <div class="input-group">
+          <label for="profile-image">프로필 사진</label>
+          <p class="helper-text">* helper text</p>
+          <div class="image-preview" id="imagePreview">
+            <img id="previewImg" src="placeholder.png" />
+            <span class="alt-text">+</span>
+          </div>
+          <input type="file" id="profile-imag" accept="image/*" required />
+        </div>
+
+        <!-- 이메일 -->
+        <div class="input-group">
+          <label for="email">이메일 *</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="이메일을 입력하세요"
+            required
+          />
+          <p class="helper-text">* helper text</p>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="input-group">
+          <label for="password">비밀번호 *</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="비밀번호를 입력하세요"
+            required
+          />
+          <p class="helper-text">* helper text</p>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div class="input-group">
+          <label for="confirm-password">비밀번호 확인 *</label>
+          <input
+            type="password"
+            id="confirm-password"
+            placeholder="비밀번호를 한번 더 입력하세요"
+            required
+          />
+          <p class="helper-text">* helper text</p>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="input-group">
+          <label for="nickname">닉네임 *</label>
+          <input
+            type="text"
+            id="nickname"
+            placeholder="닉네임을 입력하세요"
+            required
+          />
+          <p class="helper-text">* helper text</p>
+        </div>
+
+        <!-- 회원가입 버튼 -->
+        <button type="submit" class="signup-btn">회원가입</button>
+      </form>
+
+      <!-- 로그인 페이지로 이동 -->
+      <button class="signin-btn" onclick="window.location.href='sign-in.html'">
+        로그인하러 가기
+      </button>
+    </div>
+
+    <script src="sign-up.js"></script>
+  </body>
+</html>

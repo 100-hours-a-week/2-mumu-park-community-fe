@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인</title>
+    <link rel="stylesheet" href="sign-in.css" />
+  </head>
+  <body>
+    <header>
+      <h1>아무 말 대잔치</h1>
+    </header>
+
+    <div class="login-container">
+      <h2>로그인</h2>
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="email">이메일</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="이메일을 입력하세요"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="password">비밀번호</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="비밀번호를 입력하세요"
+            required
+          />
+          <p class="helper-text">* helper text</p>
+        </div>
+        <button type="submit" class="signin-btn">로그인</button>
+      </form>
+      <button
+        class="signup-btn"
+        onclick="window.location.href='../sign/sign-up.html'"
+      >
+        회원가입
+      </button>
+    </div>
+
+    <script src="sign-in.js"></script>
+  </body>
+</html>
