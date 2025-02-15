@@ -8,6 +8,12 @@ body {
   margin: 0;
 }
 
+body > h2 {
+  margin-top: 20px; /* 기존 50px에서 수정 */
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
 header {
   width: 100%;
   background: #fdfdfd;
@@ -16,7 +22,7 @@ header {
   padding: 10px 20px;
   border-bottom: 2px solid #ccc;
   height: 60px;
-  position: relative; /* 위치 기준점 설정 */
+  position: fixed; /* 위치 기준점 설정 */
 }
 
 header h1 {
@@ -53,6 +59,13 @@ header h1 {
   object-fit: cover; /* 이미지 비율 유지 */
 }
 
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 80px; /* 헤더 높이만큼 여백 */
+}
+
 /* 메인 제목 스타일링 */
 body > h1 {
   margin-top: 50px; /* 헤더 높이보다 큰 값으로 설정 */
@@ -64,12 +77,17 @@ body > h1 {
 form {
   width: 100%;
   max-width: 700px;
-  padding: 20px;
+  padding: 30px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+h2 {
+  text-align: center; /* h2 태그만 중앙 정렬 */
+  margin-bottom: 60px;
+  font-size: 24px;
+}
 /* 라벨 스타일링 */
 form label {
   display: block;

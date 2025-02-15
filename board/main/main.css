@@ -6,8 +6,9 @@ header {
   align-items: center;
   padding: 10px 20px;
   border-bottom: 2px solid #ccc;
+  margin-bottom: 0;
   height: 60px;
-  position: relative; /* 위치 기준점 설정 */
+  position: fixed; /* 위치 기준점 설정 */
 }
 
 header h1 {
@@ -33,16 +34,17 @@ header h1 {
   object-fit: cover; /* 이미지 비율 유지 */
 }
 
-/* 메인 컨테이너 */
+/* 컨테이너 여백 조정 */
 .container {
   max-width: 800px;
-  margin: 80px auto 0;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 80px 20px 20px; /* 상단 패딩을 헤더 높이만큼 확보 */
 }
 
 /* 환영 섹션 */
 .welcome-section {
   margin-bottom: 20px;
+  margin-top: 40px;
   text-align: center; /* 텍스트 중앙 정렬 */
   font-size: 25px;
 }

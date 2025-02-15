@@ -15,8 +15,9 @@ header {
   align-items: center;
   padding: 10px 20px;
   border-bottom: 2px solid #ccc;
+  margin-bottom: 0;
   height: 60px;
-  position: relative; /* 위치 기준점 설정 */
+  position: fixed; /* 위치 기준점 설정 */
 }
 
 header h1 {
@@ -51,6 +52,7 @@ header h1 {
   width: 350px;
   height: 600px;
   margin-top: 30px;
+  padding: 80px 20px 20px;
 }
 
 /* 입력 필드 스타일 */
