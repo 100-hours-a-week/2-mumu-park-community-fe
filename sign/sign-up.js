@@ -1,3 +1,4 @@
+// 이메일 유효성 검사 함수
 function validateEmail(email) {
   if (!email) {
     return "* 이메일을 입력해주세요.";
@@ -16,6 +17,7 @@ function validateEmail(email) {
   return "";
 }
 
+// 비밀번호 유효성 검사 함수
 function validatePassword(password) {
   if (!password) {
     return "* 비밀번호를 입력해주세요.";
@@ -48,6 +50,7 @@ function isValidPasswordFormat(password) {
   return hasUpperCase && hasLowerCase && hasNumber && hasSpecial;
 }
 
+// 비밀번호 확인 검사 함수
 function validatePasswordConfirm(password, confirmPassword) {
   if (!confirmPassword) {
     return "* 비밀번호를 한번더 입력해주세요.";
@@ -60,6 +63,7 @@ function validatePasswordConfirm(password, confirmPassword) {
   return "";
 }
 
+// 닉네임 유효성 검사 함수
 function validateNickname(nickname) {
   if (!nickname) {
     return "* 닉네임을 입력해주세요.";
@@ -90,6 +94,7 @@ function validateProfileImage() {
   return "";
 }
 
+// 전체 폼 유효성 검사 함수
 function validateForm() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -97,6 +102,7 @@ function validateForm() {
   const nickname = document.getElementById("nickname").value;
   const profileImage = document.getElementById("profile-imag").files[0];
 
+  // 이메일, 비밀번호 등의 유효성 검사 결과가 빈 문자열이면 유효한 것
   const isEmailValid = validateEmail(email) === "";
   const isPasswordValid = validatePassword(password) === "";
   const isConfirmPasswordValid =
@@ -120,6 +126,7 @@ function validateForm() {
     signupButton.disabled = true;
   }
 
+  // 프로필 이미지 유효성 메시지 표시
   const profileImageHelper = document
     .querySelector("#profile-imag")
     .closest(".input-group")
@@ -130,32 +137,45 @@ function validateForm() {
   }
 }
 
+// 이미지 프리뷰 클릭 처리
 document.getElementById("imagePreview").addEventListener("click", function () {
   document.getElementById("profile-imag").click();
 });
 
+// 이미지 미리보기 처리
 document
   .getElementById("profile-imag")
   .addEventListener("change", function (e) {
     const file = e.target.files[0];
+    const imagePreview = document.getElementById("imagePreview");
+    const previewImg = document.getElementById("previewImg");
+    const altText = document.querySelector(".alt-text");
     const helperText =
       this.closest(".input-group").querySelector(".helper-text");
 
     if (file) {
       const reader = new FileReader();
       reader.onload = function (e) {
-        document.getElementById("previewImg").src = e.target.result;
-        document.querySelector(".alt-text").style.display = "none";
+        previewImg.style.display = "block";
+        previewImg.src = e.target.result;
+        altText.style.display = "none";
+        imagePreview.style.backgroundColor = "transparent";
         helperText.style.display = "none";
       };
       reader.readAsDataURL(file);
     } else {
-      helperText.textContent = validateProfileImage();
+      // 파일 선택이 취소된 경우
+      previewImg.style.display = "none";
+      previewImg.src = "";
+      altText.style.display = "block";
+      imagePreview.style.backgroundColor = "#ccc";
+      helperText.textContent = "* 프로필 사진을 추가해주세요.";
       helperText.style.display = "block";
     }
     validateForm();
   });
 
+// blur 이벤트 리스너 설정
 const fields = ["email", "password", "confirm-password", "nickname"];
 fields.forEach((field) => {
   const input = document.getElementById(field);
@@ -202,10 +222,12 @@ fields.forEach((field) => {
   input.addEventListener("input", validateForm);
 });
 
+// 페이지 로드 시 초기 유효성 검사
 document.addEventListener("DOMContentLoaded", function () {
   validateForm();
 });
 
+// 이미지 압축 함수
 async function compressImage(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -216,6 +238,7 @@ async function compressImage(file) {
         let width = img.width;
         let height = img.height;
 
+        // 최대 크기 지정 (예: 300px)
         const MAX_SIZE = 300;
         if (width > height) {
           if (width > MAX_SIZE) {
@@ -234,6 +257,7 @@ async function compressImage(file) {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
 
+        // 이미지 품질 조정 (0.6 = 60% 품질)
         const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.6);
         resolve(compressedDataUrl);
       };
@@ -243,6 +267,7 @@ async function compressImage(file) {
   });
 }
 
+// 폼 제출 처리
 document
   .getElementById("signupForm")
   .addEventListener("submit", async function (e) {
@@ -254,6 +279,7 @@ document
     const nickname = document.getElementById("nickname").value;
     const profileImage = document.getElementById("profile-imag").files[0];
 
+    // 모든 필드 유효성 검사
     const emailValidation = validateEmail(email);
     const passwordValidation = validatePassword(password);
     const confirmValidation = validatePasswordConfirm(
@@ -263,6 +289,7 @@ document
     const nicknameValidation = validateNickname(nickname);
     const profileImageValidation = validateProfileImage();
 
+    // 에러 메시지 표시
     document.querySelector("#email + .helper-text").textContent =
       emailValidation;
     document.querySelector("#password + .helper-text").textContent =
@@ -278,6 +305,7 @@ document
       .querySelector(".helper-text");
     profileImageHelper.textContent = profileImageValidation;
 
+    // 유효성 검사 실패 시 제출 중단
     if (
       emailValidation ||
       passwordValidation ||
@@ -302,22 +330,32 @@ document
       return;
     }
 
-    const compressedImage = await compressImage(profileImage);
+    try {
+      // 이미지 압축
+      const compressedImage = await compressImage(profileImage);
 
-    const newUser = {
-      id: Date.now().toString(),
-      email,
-      password,
-      nickname,
-      profileImage: compressedImage,
-      createdAt: new Date().toISOString(),
-      posts: [],
-    };
+      // 사용자 데이터 구조
+      const newUser = {
+        id: Date.now().toString(), // 고유 ID 생성
+        email,
+        password,
+        nickname,
+        profileImage: compressedImage,
+        createdAt: new Date().toISOString(),
+        posts: [], // 사용자의 게시글을 저장할 배열
+      };
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    users.push(newUser);
+      // 기존 사용자 데이터 가져오기
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      users.push(newUser);
 
-    localStorage.setItem("users", JSON.stringify(users));
+      // 저장
+      localStorage.setItem("users", JSON.stringify(users));
 
-    window.location.href = "sign-in.html";
+      // 로그인 페이지로 이동
+      window.location.href = "sign-in.html?status=ACAOEB";
+    } catch (error) {
+      console.error("회원가입 처리 중 오류 발생:", error);
+      alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
   });

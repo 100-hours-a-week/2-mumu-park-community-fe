@@ -103,6 +103,7 @@ input {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: none;
 }
 
 .alt-text {
@@ -111,6 +112,7 @@ input {
   font-weight: bold;
   color: black;
   text-align: center;
+  display: block;
 }
 
 /* 파일 선택 숨기기 */
