@@ -78,6 +78,7 @@ input {
 
 /* helper text 스타일 */
 .helper-text {
+  display: none;
   color: red;
   font-size: 12px;
   margin-top: 4px;
@@ -134,9 +135,9 @@ input[type="file"] {
   color: white;
 }
 
-.signup-btn:hover {
+/* .signup-btn:hover {
   background: #7f6aee;
-}
+} */
 
 .signin-btn {
   background: transparent;
