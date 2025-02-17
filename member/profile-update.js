@@ -279,21 +279,69 @@ function updateProfile(updateData) {
   }
 }
 
+function showWithdrawlConfirmDialog(callback) {
+  const overlay = document.createElement("div");
+  overlay.className = "dialog-overlay";
+
+  const dialog = document.createElement("div");
+  dialog.className = "confirm-dialog";
+  dialog.innerHTML = `
+    <p>회원탈퇴 하시겠습니까?</p>
+    <p class="sub-text">작성된 게시글과 댓글은 삭제됩니다.</p>
+    <div class="button-container">
+      <button class="cancel">취소</button>
+      <button class="confirm">확인</button>
+    </div>
+  `;
+
+  // 취소 버튼
+  dialog.querySelector(".cancel").addEventListener("click", () => {
+    overlay.remove();
+  });
+
+  // 확인 버튼
+  dialog.querySelector(".confirm").addEventListener("click", () => {
+    callback();
+    overlay.remove();
+  });
+
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+}
+
 function setupWithdrawal() {
   const withdrawalBtn = document.querySelector(".withdrawl-btn");
 
   withdrawalBtn.addEventListener("click", function () {
-    if (confirm("정말로 탈퇴하시겠습니까?")) {
+    showWithdrawlConfirmDialog(() => {
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-      const users = JSON.parse(localStorage.getItem("users")) || [];
 
+      // 1. 사용자 데이터 제거
+      const users = JSON.parse(localStorage.getItem("users")) || [];
       const updatedUsers = users.filter(
         (user) => user.email !== currentUser.email
       );
       localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+      // 2. 게시글 제거
+      const posts = JSON.parse(localStorage.getItem("posts")) || [];
+      const updatedPosts = posts.filter(
+        (post) => post.authorEmail !== currentUser.email
+      );
+      localStorage.setItem("posts", JSON.stringify(updatedPosts));
+
+      // 3. 댓글 제거
+      const comments = JSON.parse(localStorage.getItem("comments")) || [];
+      const updatedComments = comments.filter(
+        (comment) => comment.authorEmail !== currentUser.email
+      );
+      localStorage.setItem("comments", JSON.stringify(updatedComments));
+
+      // 4. 현재 사용자 세션 제거
       localStorage.removeItem("currentUser");
 
+      // 5. 로그인 페이지로 이동
       window.location.href = "../sign/sign-in.html";
-    }
+    });
   });
 }

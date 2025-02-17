@@ -96,32 +96,29 @@ function validateProfileImage() {
 
 // 전체 폼 유효성 검사 함수
 function validateForm() {
-  const previewImg = document.getElementById("previewImg");
-  const nicknameInput = document.getElementById("nickname");
-  const submitButton = document.querySelector(".update-btn");
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirm-password").value;
+  const nickname = document.getElementById("nickname").value;
+  const profileImage = document.getElementById("profile-imag").files[0];
+  const submitButton = document.querySelector("button[type='submit']");
 
-  // 기존 사용자 데이터 가져오기
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  const currentUserData = users.find(
-    (user) => user.email === currentUser.email
-  );
+  // 모든 필드의 유효성 검사
+  const isEmailValid = validateEmail(email) === "";
+  const isPasswordValid = validatePassword(password) === "";
+  const isConfirmValid =
+    validatePasswordConfirm(password, confirmPassword) === "";
+  const isNicknameValid = validateNickname(nickname) === "";
+  const isProfileImageValid = !!profileImage;
 
-  // 닉네임 변경 여부 확인
-  const isNicknameChanged =
-    currentUserData && currentUserData.nickname !== nicknameInput.value;
-
-  // 닉네임 유효성 검사
-  const isNicknameValid = validateNickname(nicknameInput.value);
-
-  // 프로필 이미지 변경 여부 확인
-  const isImageChanged =
-    previewImg &&
-    previewImg.src !==
-      (currentUser.profileImage || "../photo/profile_mumu.jpeg");
-
-  // 버튼 상태 업데이트
-  if ((isNicknameChanged && isNicknameValid) || isImageChanged) {
+  // 모든 조건이 충족되면 버튼 활성화
+  if (
+    isEmailValid &&
+    isPasswordValid &&
+    isConfirmValid &&
+    isNicknameValid &&
+    isProfileImageValid
+  ) {
     submitButton.disabled = false;
     submitButton.style.backgroundColor = "#7f6aee";
     submitButton.style.cursor = "pointer";
@@ -131,7 +128,53 @@ function validateForm() {
     submitButton.style.cursor = "not-allowed";
   }
 
-  return (isNicknameChanged && isNicknameValid) || isImageChanged;
+  return (
+    isEmailValid &&
+    isPasswordValid &&
+    isConfirmValid &&
+    isNicknameValid &&
+    isProfileImageValid
+  );
+}
+
+// 이미지 압축 함수
+async function compressImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        // 최대 크기 지정 (예: 300px)
+        const MAX_SIZE = 300;
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 이미지 품질 조정 (0.6 = 60% 품질)
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.6);
+        resolve(compressedDataUrl);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 // 이미지 프리뷰 클릭 처리
@@ -216,53 +259,16 @@ fields.forEach((field) => {
   });
 
   // input 이벤트도 추가하여 실시간으로 버튼 상태 업데이트
-  input.addEventListener("input", validateForm);
+  input.addEventListener("input", function () {
+    helperText.style.display = "none";
+    validateForm();
+  });
 });
 
 // 페이지 로드 시 초기 유효성 검사
 document.addEventListener("DOMContentLoaded", function () {
   validateForm();
 });
-
-// 이미지 압축 함수
-async function compressImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = new Image();
-      img.onload = function () {
-        const canvas = document.createElement("canvas");
-        let width = img.width;
-        let height = img.height;
-
-        // 최대 크기 지정 (예: 300px)
-        const MAX_SIZE = 300;
-        if (width > height) {
-          if (width > MAX_SIZE) {
-            height *= MAX_SIZE / width;
-            width = MAX_SIZE;
-          }
-        } else {
-          if (height > MAX_SIZE) {
-            width *= MAX_SIZE / height;
-            height = MAX_SIZE;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // 이미지 품질 조정 (0.6 = 60% 품질)
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.6);
-        resolve(compressedDataUrl);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 // 폼 제출 처리
 document
