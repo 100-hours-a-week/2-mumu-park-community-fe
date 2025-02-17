@@ -1,9 +1,7 @@
-# 2-mumu-park-community-fe
-
-# 프로젝트 개요
+# 👏 프로젝트 개요 👏
 Html + CSS + Vanila JS 로 만든 커뮤니티 사이트에요! 💬
 
-# 기능 설명
+# 👍 기능 설명 👍
 ## 회원 관련
 1. 로그인
 2. 회원가입
@@ -24,7 +22,7 @@ Html + CSS + Vanila JS 로 만든 커뮤니티 사이트에요! 💬
 9. 댓글 삭제
 ---
 
-# 동작 화면
+# 🏃‍♂️ 동작 화면 🏃‍♂️
 ### 로그인 화면
 <img width="1512" alt="image" src="https://github.com/user-attachments/assets/88b78d7f-a0de-46c9-868e-abf081e5dcdb" />
 
