@@ -64,9 +64,22 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     return;
   }
 
+  const currentUser = {
+    email: email,
+    // 사용자 정보에서 프로필 이미지 경로 가져오기
+    profileImage: getUserProfileImage(email),
+  };
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
   // 유효성 검사 통과시 main.html로 이동
   window.location.href = "../board/main/main.html";
 });
+
+function getUserProfileImage(email) {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const user = users.find((user) => user.email === email);
+  return user.profileImage || "../photo/default_profile.jpeg"; // 기본 이미지 경로 지정
+}
 
 // 입력 필드 변경 시 헬퍼 텍스트 숨기기
 document.getElementById("email").addEventListener("input", function () {
