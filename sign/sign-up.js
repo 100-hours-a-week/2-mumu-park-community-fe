@@ -96,45 +96,42 @@ function validateProfileImage() {
 
 // 전체 폼 유효성 검사 함수
 function validateForm() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirm-password").value;
-  const nickname = document.getElementById("nickname").value;
-  const profileImage = document.getElementById("profile-imag").files[0];
+  const previewImg = document.getElementById("previewImg");
+  const nicknameInput = document.getElementById("nickname");
+  const submitButton = document.querySelector(".update-btn");
 
-  // 이메일, 비밀번호 등의 유효성 검사 결과가 빈 문자열이면 유효한 것
-  const isEmailValid = validateEmail(email) === "";
-  const isPasswordValid = validatePassword(password) === "";
-  const isConfirmPasswordValid =
-    validatePasswordConfirm(password, confirmPassword) === "";
-  const isNicknameValid = validateNickname(nickname) === "";
-  const isProfileImageValid = !!profileImage;
+  // 기존 사용자 데이터 가져오기
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const currentUserData = users.find(
+    (user) => user.email === currentUser.email
+  );
 
-  const signupButton = document.querySelector(".signup-btn");
+  // 닉네임 변경 여부 확인
+  const isNicknameChanged =
+    currentUserData && currentUserData.nickname !== nicknameInput.value;
 
-  if (
-    isEmailValid &&
-    isPasswordValid &&
-    isConfirmPasswordValid &&
-    isNicknameValid &&
-    isProfileImageValid
-  ) {
-    signupButton.style.backgroundColor = "#7f6aee";
-    signupButton.disabled = false;
+  // 닉네임 유효성 검사
+  const isNicknameValid = validateNickname(nicknameInput.value);
+
+  // 프로필 이미지 변경 여부 확인
+  const isImageChanged =
+    previewImg &&
+    previewImg.src !==
+      (currentUser.profileImage || "../photo/profile_mumu.jpeg");
+
+  // 버튼 상태 업데이트
+  if ((isNicknameChanged && isNicknameValid) || isImageChanged) {
+    submitButton.disabled = false;
+    submitButton.style.backgroundColor = "#7f6aee";
+    submitButton.style.cursor = "pointer";
   } else {
-    signupButton.style.backgroundColor = "";
-    signupButton.disabled = true;
+    submitButton.disabled = true;
+    submitButton.style.backgroundColor = "#aca0eb";
+    submitButton.style.cursor = "not-allowed";
   }
 
-  // 프로필 이미지 유효성 메시지 표시
-  const profileImageHelper = document
-    .querySelector("#profile-imag")
-    .closest(".input-group")
-    .querySelector(".helper-text");
-  if (!isProfileImageValid) {
-    profileImageHelper.textContent = "* 프로필 사진을 추가해주세요.";
-    profileImageHelper.style.display = "block";
-  }
+  return (isNicknameChanged && isNicknameValid) || isImageChanged;
 }
 
 // 이미지 프리뷰 클릭 처리
