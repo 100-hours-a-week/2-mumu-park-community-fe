@@ -126,16 +126,6 @@ function setupForm() {
   updateSubmitButton();
 }
 
-// 파일을 Data URL로 읽기
-function readFileAsDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 async function compressImage(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
