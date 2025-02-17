@@ -15,6 +15,45 @@ document.addEventListener("DOMContentLoaded", function () {
     profileImage.alt = `${currentUser.email}'s profile`;
   }
 
+  const profileSection = document.querySelector(".profile-section");
+  const profileDropdown = document.querySelector(".profile-dropdown");
+
+  // 프로필 아이콘 클릭 시 드롭다운 토글
+  profileSection.addEventListener("click", function (event) {
+    event.stopPropagation(); // 이벤트 버블링 방지
+    profileDropdown.style.display =
+      profileDropdown.style.display === "none" ||
+      profileDropdown.style.display === ""
+        ? "block"
+        : "none";
+  });
+
+  // 문서 다른 곳 클릭 시 드롭다운 닫기
+  document.addEventListener("click", function () {
+    profileDropdown.style.display = "none";
+  });
+
+  // 드롭다운 메뉴 이벤트 리스너
+  const dropdownItems = document.querySelectorAll(".dropdown-item");
+  dropdownItems.forEach((item) => {
+    item.addEventListener("click", function (e) {
+      e.stopPropagation(); // 이벤트 버블링 방지
+      const text = e.target.textContent;
+      switch (text) {
+        case "회원정보수정":
+          window.location.href = "../profile/edit-profile.html";
+          break;
+        case "비밀번호수정":
+          window.location.href = "../profile/change-password.html";
+          break;
+        case "로그아웃":
+          localStorage.removeItem("currentUser");
+          window.location.href = "../sign/sign-in.html";
+          break;
+      }
+    });
+  });
+
   loadAndDisplayPost(postId);
   setupCommentSubmission(postId);
 });

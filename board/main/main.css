@@ -34,6 +34,35 @@ header h1 {
   object-fit: cover; /* 이미지 비율 유지 */
 }
 
+.profile-section {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 400px; /* 오른쪽으로 약간 이동 */
+  margin-top: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  z-index: 10;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  background-color: #d9d9d9;
+  color: black;
+  text-align: center;
+}
+
+.dropdown-item:hover {
+  background-color: #e9e9e9;
+}
+
 /* 컨테이너 여백 조정 */
 .container {
   max-width: 800px;
