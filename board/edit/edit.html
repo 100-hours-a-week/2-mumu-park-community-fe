@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시글 수정</title>
+    <link rel="stylesheet" href="edit.css" />
+  </head>
+  <body>
+    <header>
+      <button
+        type="button"
+        class="back-button"
+        onclick="window.location.href='../detail/detail.html'"
+      >
+        &lt;
+      </button>
+      <h1>아무 말 대잔치</h1>
+      <div class="profile-image">
+        <img src="../photo/profile_mumu.jpeg" alt="profile" />
+      </div>
+    </header>
+
+    <div class="container">
+      <form>
+        <h2 class="form-title">게시글 수정</h2>
+        <label for="title" class="required">제목 *</label>
+        <input
+          type="text"
+          id="title"
+          placeholder="제목을 입력해주세요. (최대 26글자)"
+          required
+        />
+
+        <label for="content" class="required">내용 *</label>
+        <textarea
+          id="content"
+          placeholder="내용을 입력해주세요."
+          required
+        ></textarea>
+        <p class="helper-text">* helper text</p>
+
+        <label for="image">이미지</label>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          placeholder="파일을 선택해주세요."
+        />
+        <button type="submit">수정하기</button>
+      </form>
+    </div>
+
+    <script src="./edit.js"></script>
+  </body>
+</html>

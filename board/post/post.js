@@ -40,10 +40,13 @@ function setupForm() {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
     let imageUrl = "";
+    let imageFileName = "";
+
     if (imageInput.files[0]) {
       try {
         // 이미지 압축 적용
         imageUrl = await compressImage(imageInput.files[0]);
+        imageFileName = imageInput.files[0].name;
       } catch (error) {
         console.error("이미지 압축 중 오류:", error);
         alert("이미지 처리 중 오류가 발생했습니다.");
@@ -57,6 +60,7 @@ function setupForm() {
       title,
       content,
       imageUrl,
+      imageFileName,
       authorEmail: currentUser.email,
       authorNickname: currentUser.nickname,
       createdAt: new Date().toISOString(),
@@ -81,7 +85,7 @@ function setupForm() {
   contentTextarea.addEventListener("input", function () {
     const content = this.value.trim();
     if (!content) {
-      helperText.textContent = "* 내용을 모두 작성해주세요";
+      helperText.textContent = "* 제목, 내용을 모두 작성해주세요";
       helperText.style.display = "block";
     } else {
       helperText.style.display = "none";
@@ -93,7 +97,7 @@ function setupForm() {
   contentTextarea.addEventListener("blur", function () {
     const content = this.value.trim();
     if (!content) {
-      helperText.textContent = "* 내용을 모두 작성해주세요";
+      helperText.textContent = "* 제목, 내용을 모두 작성해주세요";
       helperText.style.display = "block";
     }
   });
@@ -112,7 +116,7 @@ function setupForm() {
       submitButton.style.backgroundColor = "#aca0eb";
       submitButton.disabled = true;
       if (!content) {
-        helperText.textContent = "* 내용을 모두 작성해주세요";
+        helperText.textContent = "* 제목, 내용을 모두 작성해주세요";
         helperText.style.display = "block";
       }
     }
