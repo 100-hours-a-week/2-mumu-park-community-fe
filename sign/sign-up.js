@@ -342,7 +342,6 @@ document
         nickname,
         profileImage: compressedImage,
         createdAt: new Date().toISOString(),
-        posts: [], // 사용자의 게시글을 저장할 배열
       };
 
       // 기존 사용자 데이터 가져오기

@@ -99,7 +99,7 @@ function createPostElement(post) {
                 alt="author profile" 
                 style="width: 30px; height: 30px; border-radius: 50%;">
           </div>
-          <span class="username">${author.email}</span>
+          <span class="username"><strong>${author.nickname}</strong></span>
       </div>
   `;
 
