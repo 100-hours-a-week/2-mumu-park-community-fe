@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
           break;
         case "로그아웃":
           localStorage.removeItem("currentUser");
-          window.location.href = "../sign/sign-in.html";
+          window.location.href = "../../sign/sign-in.html";
           break;
       }
     });
