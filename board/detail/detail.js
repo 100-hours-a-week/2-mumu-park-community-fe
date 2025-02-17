@@ -70,6 +70,40 @@ function displayPostContent(post, author) {
   document.querySelector(".date").textContent = formatDate(post.createdAt);
   document.querySelector(".content-text").textContent = post.content;
 
+  const postImage = document.querySelector(".post-image");
+  const imageContainer = document.querySelector(".image-container");
+
+  if (post.imageUrl) {
+    postImage.src = post.imageUrl;
+    postImage.style.display = "block";
+    imageContainer.style.display = "flex";
+
+    // 이미지 로드 완료 후 크기 조정
+    postImage.onload = function () {
+      const ratio = this.naturalWidth / this.naturalHeight;
+
+      if (ratio > 1) {
+        // 가로가 더 긴 이미지
+        if (this.naturalWidth > 800) {
+          imageContainer.style.width = "800px";
+        } else {
+          imageContainer.style.width = this.naturalWidth + "px";
+        }
+      } else {
+        // 세로가 더 긴 이미지
+        const maxHeight = 600;
+        if (this.naturalHeight > maxHeight) {
+          imageContainer.style.width = maxHeight * ratio + "px";
+        } else {
+          imageContainer.style.width = this.naturalWidth + "px";
+        }
+      }
+    };
+  } else {
+    postImage.style.display = "none";
+    imageContainer.style.display = "none";
+  }
+
   // 통계 업데이트
   const statButtons = document.querySelectorAll(".stat-button");
   const likeButton = statButtons[0];
