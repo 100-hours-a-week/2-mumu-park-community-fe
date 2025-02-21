@@ -80,45 +80,6 @@ function setupProfileDropdown() {
   });
 }
 
-async function compressImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = new Image();
-      img.onload = function () {
-        const canvas = document.createElement("canvas");
-        let width = img.width;
-        let height = img.height;
-
-        // 최대 크기 지정 (예: 300px)
-        const MAX_SIZE = 300;
-        if (width > height) {
-          if (width > MAX_SIZE) {
-            height *= MAX_SIZE / width;
-            width = MAX_SIZE;
-          }
-        } else {
-          if (height > MAX_SIZE) {
-            width *= MAX_SIZE / height;
-            height = MAX_SIZE;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // 이미지 품질 조정 (0.6 = 60% 품질)
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.6);
-        resolve(compressedDataUrl);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
 function setupProfileImageUpdate() {
   const imagePreview = document.getElementById("imagePreview");
   const fileInput = document.getElementById("profile-image");
@@ -223,24 +184,24 @@ function setupFormSubmission() {
   });
 }
 
-function validateNickname(nickname) {
-  const helperText = document.querySelector(".helper-text");
+// function validateNickname(nickname) {
+//   const helperText = document.querySelector(".helper-text");
 
-  if (!nickname) {
-    helperText.textContent = "* 닉네임을 입력해주세요.";
-    helperText.style.display = "block";
-    return false;
-  }
+//   if (!nickname) {
+//     helperText.textContent = "* 닉네임을 입력해주세요.";
+//     helperText.style.display = "block";
+//     return false;
+//   }
 
-  if (nickname.length < 2 || nickname.length > 10) {
-    helperText.textContent = "* 닉네임은 2자 이상 10자 이하여야 합니다.";
-    helperText.style.display = "block";
-    return false;
-  }
+//   if (nickname.length < 2 || nickname.length > 10) {
+//     helperText.textContent = "* 닉네임은 2자 이상 10자 이하여야 합니다.";
+//     helperText.style.display = "block";
+//     return false;
+//   }
 
-  helperText.style.display = "none";
-  return true;
-}
+//   helperText.style.display = "none";
+//   return true;
+// }
 
 function updateProfile(updateData) {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
