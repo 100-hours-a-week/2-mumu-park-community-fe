@@ -5,8 +5,9 @@
     "content": "안녕하세요. 첫 번째 게시글의 내용입니다. 반갑습니다!",
     "authorEmail": "user1@example.com",
     "authorNickname": "행복한 코더",
+    "authorProfileImg": "https://example.com/profiles/john_doe.jpg",
     "createdAt": "2024-02-15T10:00:00.000Z",
-    "likeCnt": 5,
+    "likedBy": ["user2@example.com", "user3@example.com", "user4@example.com"],
     "viewCnt": 10,
     "commentCnt": 1,
     "comments": [
@@ -25,8 +26,9 @@
     "content": "날씨가 맑고 화창해서 기분이 좋습니다.",
     "authorEmail": "user2@example.com",
     "authorNickname": "즐거운 개발자",
+    "authorProfileImg": "https://example.com/profiles/john_doe.jpg",
     "createdAt": "2024-02-16T09:00:00.000Z",
-    "likeCnt": 3,
+    "likedBy": ["user1@example.com", "user3@example.com"],
     "viewCnt": 7,
     "commentCnt": 0,
     "comments": []
@@ -37,8 +39,14 @@
     "content": "함께 JavaScript를 공부할 분들을 모집합니다. 관심 있으신 분들은 댓글 남겨주세요.",
     "authorEmail": "user3@example.com",
     "authorNickname": "열정 프로그래머",
+    "authorProfileImg": "https://example.com/profiles/john_doe.jpg",
     "createdAt": "2024-02-16T15:00:00.000Z",
-    "likeCnt": 8,
+    "likedBy": [
+      "user1@example.com",
+      "user2@example.com",
+      "user4@example.com",
+      "user5@example.com"
+    ],
     "viewCnt": 15,
     "commentCnt": 2,
     "comments": [
@@ -64,8 +72,9 @@
     "content": "이번 주말에 읽은 책인데 정말 좋았어요. 다들 한번 읽어보세요!",
     "authorEmail": "user1@example.com",
     "authorNickname": "행복한 코더",
+    "authorProfileImg": "https://example.com/profiles/john_doe.jpg",
     "createdAt": "2024-02-17T11:00:00.000Z",
-    "likeCnt": 12,
+    "likedBy": ["user2@example.com", "user3@example.com"],
     "viewCnt": 20,
     "commentCnt": 0,
     "comments": []
@@ -76,8 +85,9 @@
     "content": "드디어 새로운 프로젝트를 시작하게 되었네요. 열심히 해보겠습니다!",
     "authorEmail": "user2@example.com",
     "authorNickname": "즐거운 개발자",
+    "authorProfileImg": "https://example.com/profiles/john_doe.jpg",
     "createdAt": "2024-02-17T14:00:00.000Z",
-    "likeCnt": 6,
+    "likedBy": ["user1@example.com"],
     "viewCnt": 11,
     "commentCnt": 1,
     "comments": [

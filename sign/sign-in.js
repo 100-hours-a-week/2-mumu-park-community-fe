@@ -1,4 +1,3 @@
-// 페이지 로드 시 초기 설정
 document.addEventListener("DOMContentLoaded", function () {
   validateForm();
 });
@@ -33,14 +32,33 @@ document
       return;
     }
 
-    const currentUser = {
-      email: email,
-      profileImage: getUserProfileImage(email),
-    };
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    // Todo : 추후 서버만들고 변경해야할지점
+    // await requestSignin({ email, password });
 
     window.location.href = "../board/main/main.html";
   });
+
+async function requestSignin(signinInfo) {
+  try {
+    const response = await fetch("/users/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(signinInfo),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Signup failed:", error);
+    throw error;
+  }
+}
 
 async function checkExistUser(email, password) {
   try {
@@ -58,12 +76,6 @@ async function checkExistUser(email, password) {
     console.error("데이터를 가져오는 중 오류 발생:", err);
     return false;
   }
-}
-
-function getUserProfileImage(email) {
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  const user = users.find((user) => user.email === email);
-  return user.profileImage || "../photo/default_profile.jpeg"; // 기본 이미지 경로 지정
 }
 
 function validateForm() {

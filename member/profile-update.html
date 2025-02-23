@@ -28,7 +28,6 @@
     <div class="update-container">
       <h2>회원정보수정</h2>
       <form id="signupForm">
-        <!-- 프로필 사진 -->
         <div class="input-group">
           <label for="profile-image">프로필 사진 *</label>
           <div class="image-container">
@@ -42,13 +41,11 @@
           <input type="file" id="profile-image" accept="image/*" />
         </div>
 
-        <!-- 이메일 -->
         <div class="input-group">
           <label for="email">이메일</label>
-          <p>psongchoon@kakao.com</p>
+          <p></p>
         </div>
 
-        <!-- 닉네임 -->
         <div class="input-group">
           <label for="nickname">닉네임</label>
           <input
@@ -69,5 +66,8 @@
 
       <script src="./profile-update.js"></script>
       <script src="../util/toast.js"></script>
+      <script src="../util/dropdown.js"></script>
+      <script src="../validator/nickname-validator.js"></script>
+      <script src="../util/image-compressor.js"></script>
   </body>
 </html>

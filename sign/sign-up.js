@@ -13,10 +13,6 @@ async function validateForm() {
   const isNicknameValid = (await validateNickname(nickname)) === "";
   const isProfileImageValid = !!profileImage;
 
-  console.log(
-    `${isEmailValid} ${isPasswordValid} ${isNicknameValid} ${isConfirmValid} ${isProfileImageValid} `
-  );
-
   if (
     isEmailValid &&
     isPasswordValid &&
@@ -181,7 +177,6 @@ document
 
 async function signupUser(userData) {
   try {
-    console.log("come ");
     const response = await fetch("/users/signup", {
       method: "POST",
       headers: {
@@ -189,14 +184,12 @@ async function signupUser(userData) {
       },
       body: JSON.stringify(userData),
     });
-    console.log("end");
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const result = await response.json();
-    console.log("Signup successful:", result);
     return result;
   } catch (error) {
     console.error("Signup failed:", error);

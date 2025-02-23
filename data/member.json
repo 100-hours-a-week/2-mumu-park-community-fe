@@ -3,6 +3,7 @@
     "id": 1,
     "email": "user1@example.com",
     "password": "hashed_password_1",
+    "nickname": "user1",
     "profileImg": "https://example.com/profiles/user1.jpg",
     "createdAt": "2024-02-15T10:00:00.000Z"
   },
@@ -10,6 +11,7 @@
     "id": 2,
     "email": "user2@example.com",
     "password": "Hashed2!",
+    "nickname": "user2",
     "profileImg": "https://example.com/profiles/user2.jpg",
     "createdAt": "2024-02-16T09:00:00.000Z"
   },
@@ -17,6 +19,7 @@
     "id": 3,
     "email": "user3@example.com",
     "password": "hashed_password_3",
+    "nickname": "user3",
     "profileImg": "https://example.com/profiles/user3.jpg",
     "createdAt": "2024-02-16T15:00:00.000Z"
   }

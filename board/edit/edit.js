@@ -1,32 +1,23 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  if (!currentUser) {
-    window.location.href = "../sign/sign-in.html";
-    return;
-  }
-
+document.addEventListener("DOMContentLoaded", async function () {
   const urlParams = new URLSearchParams(window.location.search);
   const postId = urlParams.get("id");
 
-  // 뒤로가기 버튼에 postId 추가
   const backButton = document.querySelector(".back-button");
   backButton.onclick = function () {
     window.location.href = `../detail/detail.html?id=${postId}`;
   };
 
-  // 프로필 이미지 업데이트
   const profileImage = document.querySelector(".profile-image img");
   if (profileImage) {
-    profileImage.src = currentUser.profileImage || "../photo/profile_mumu.jpeg";
-    profileImage.alt = `${currentUser.email}'s profile`;
+    profileImage.src = "../../photo/profile_mumu.jpeg";
+    profileImage.alt = `profileImg`;
   }
 
   const profileSection = document.querySelector(".profile-section");
   const profileDropdown = document.querySelector(".profile-dropdown");
 
-  // 프로필 아이콘 클릭 시 드롭다운 토글
   profileSection.addEventListener("click", function (event) {
-    event.stopPropagation(); // 이벤트 버블링 방지
+    event.stopPropagation();
     profileDropdown.style.display =
       profileDropdown.style.display === "none" ||
       profileDropdown.style.display === ""
@@ -34,52 +25,27 @@ document.addEventListener("DOMContentLoaded", function () {
         : "none";
   });
 
-  // 문서 다른 곳 클릭 시 드롭다운 닫기
   document.addEventListener("click", function () {
     profileDropdown.style.display = "none";
   });
 
-  // 드롭다운 메뉴 이벤트 리스너
-  const dropdownItems = document.querySelectorAll(".dropdown-item");
-  dropdownItems.forEach((item) => {
-    item.addEventListener("click", function (e) {
-      e.stopPropagation(); // 이벤트 버블링 방지
-      const text = e.target.textContent;
-      switch (text) {
-        case "회원정보수정":
-          window.location.href = "../profile/edit-profile.html";
-          break;
-        case "비밀번호수정":
-          window.location.href = "../profile/change-password.html";
-          break;
-        case "로그아웃":
-          localStorage.removeItem("currentUser");
-          window.location.href = "../../sign/sign-in.html";
-          break;
-      }
-    });
-  });
-
-  loadPostData(postId);
+  dropdownSetting();
+  await loadPostData(postId);
   setupForm(postId);
 });
 
-function loadPostData(postId) {
-  const posts = JSON.parse(localStorage.getItem("posts")) || [];
+async function loadPostData(postId) {
+  const response = await fetch("../../data/board.json");
+  const posts = await response.json();
   const post = posts.find((p) => p.id === postId);
 
-  if (!post) {
-    alert("게시글을 찾을 수 없습니다.");
-    window.location.href = "../main/main.html";
-    return;
-  }
+  // Todo : 추후 서버생기면 게시글 상세정보 가져오기
+  // const postData = await fetchPostDetail(postId);
 
   document.getElementById("title").value = post.title;
   document.getElementById("content").value = post.content;
 
-  // 이미지와 파일명이 있는 경우
-  if (post.imageUrl && post.imageFileName) {
-    // DataURL을 Blob으로 변환
+  if (post.imageUrl && post.imgFileName) {
     const byteString = atob(post.imageUrl.split(",")[1]);
     const mimeString = post.imageUrl.split(",")[0].split(":")[1].split(";")[0];
     const ab = new ArrayBuffer(byteString.length);
@@ -91,10 +57,8 @@ function loadPostData(postId) {
 
     const blob = new Blob([ab], { type: mimeString });
 
-    // 저장된 파일명으로 File 객체 생성
     const file = new File([blob], post.imageFileName, { type: mimeString });
 
-    // input file에 파일 설정
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(file);
     document.getElementById("image").files = dataTransfer.files;
@@ -108,11 +72,17 @@ function setupForm(postId) {
   const imageInput = document.getElementById("image");
   const helperText = contentTextarea.nextElementSibling;
 
-  // 제목 글자수 제한
-  titleInput.addEventListener("input", function (e) {
-    if (this.value.length > 26) {
-      this.value = this.value.substring(0, 26);
+  titleInput.addEventListener("input", function (event) {
+    limitTitleLength(event);
+
+    const title = this.value.trim();
+    if (!title) {
+      helperText.textContent = "* 제목, 내용을 모두 작성해주세요";
+      helperText.style.display = "block";
+    } else {
+      helperText.style.display = "none";
     }
+    updateSubmitButton();
   });
 
   contentTextarea.addEventListener("input", function () {
@@ -126,7 +96,6 @@ function setupForm(postId) {
     updateSubmitButton();
   });
 
-  // blur 이벤트 처리 (focus를 잃었을 때)
   contentTextarea.addEventListener("blur", function () {
     const content = this.value.trim();
     if (!content) {
@@ -135,7 +104,6 @@ function setupForm(postId) {
     }
   });
 
-  // 이미지 변경 시 미리보기 업데이트
   imageInput.addEventListener("change", async function (e) {
     const file = e.target.files[0];
     if (file) {
@@ -149,21 +117,11 @@ function setupForm(postId) {
     }
   });
 
-  // 폼 제출
-  // 폼 제출
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const title = titleInput.value.trim();
     const content = contentTextarea.value.trim();
-
-    const posts = JSON.parse(localStorage.getItem("posts"));
-    const postIndex = posts.findIndex((p) => p.id === postId);
-
-    if (postIndex === -1) {
-      alert("게시글을 찾을 수 없습니다.");
-      return;
-    }
 
     let imageUrl = null; // 기본값을 null로 설정
     let imageFileName = null; // 파일명도 null로 설정
@@ -180,17 +138,9 @@ function setupForm(postId) {
       }
     }
 
-    // 게시글 업데이트
-    posts[postIndex] = {
-      ...posts[postIndex],
-      title,
-      content,
-      imageUrl, // null이면 이미지 없음
-      imageFileName, // null이면 파일명도 없음
-      updatedAt: new Date().toISOString(),
-    };
+    // Todo : 추후 서버 생기면 리팩토링
+    // await updatePost({ userId, postId, title, content, imageUrl, imageFileName });
 
-    localStorage.setItem("posts", JSON.stringify(posts));
     window.location.href = `../detail/detail.html?id=${postId}`;
   });
 
@@ -207,45 +157,43 @@ function setupForm(postId) {
       submitButton.disabled = true;
     }
   }
-
-  // 초기 버튼 상태 설정
   updateSubmitButton();
 }
 
-// 이미지 압축 함수는 post.js와 동일
-async function compressImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = new Image();
-      img.onload = function () {
-        const canvas = document.createElement("canvas");
-        let width = img.width;
-        let height = img.height;
+async function updatePost(post) {
+  try {
+    const response = await fetch(`/boards/${post.postId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(post),
+    });
 
-        const MAX_SIZE = 800;
-        if (width > height) {
-          if (width > MAX_SIZE) {
-            height *= MAX_SIZE / width;
-            width = MAX_SIZE;
-          }
-        } else {
-          if (height > MAX_SIZE) {
-            width *= MAX_SIZE / height;
-            height = MAX_SIZE;
-          }
-        }
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Update Post failed:", error);
+    throw error;
+  }
+}
 
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.8);
-        resolve(compressedDataUrl);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+async function fetchPostDetail(postId) {
+  try {
+    const response = await fetch(`/boards/{postId}`);
+
+    if (!response.ok) {
+      throw new Error("error creating");
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (err) {
+    console.error("게시글 가져오는 중 오류 발생:", err);
+    return false;
+  }
 }
