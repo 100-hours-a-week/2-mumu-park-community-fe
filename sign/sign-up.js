@@ -136,12 +136,14 @@ document
     const nickname = document.getElementById("nickname").value;
     const profileImage = document.getElementById("profile-imag").files[0];
 
+    // Todo : 추후 checkEmailDuplicate 메서드 사용하도록 변경
     const emailValidation = await validateEmail(email);
     const passwordValidation = validatePassword(password);
     const confirmValidation = validatePasswordConfirm(
       password,
       confirmPassword
     );
+    // Todo : 추후 checkNicknameDuplicate 메서드를 사용하도록 변경
     const nicknameValidation = await validateNickname(nickname);
     const profileImageValidation = validateProfileImage();
 

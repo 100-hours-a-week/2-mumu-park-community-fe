@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
   setupProfile();
-  setupDropdown();
   dropdownSetting();
   setupForm();
 });
@@ -11,29 +10,6 @@ function setupProfile() {
     profileImage.src = "../../photo/profile_mumu.jpeg";
     profileImage.alt = `profileImg`;
   }
-}
-
-function setupDropdown() {
-  const profileSection = document.querySelector(".profile-section");
-  const profileDropdown = document.querySelector(".profile-dropdown");
-
-  if (!profileSection || !profileDropdown) return;
-
-  profileSection.addEventListener("click", function (event) {
-    event.stopPropagation();
-    toggleDropdown(profileDropdown);
-  });
-
-  document.addEventListener("click", function () {
-    profileDropdown.style.display = "none";
-  });
-}
-
-function toggleDropdown(dropdown) {
-  dropdown.style.display =
-    dropdown.style.display === "none" || dropdown.style.display === ""
-      ? "block"
-      : "none";
 }
 
 function setupForm() {

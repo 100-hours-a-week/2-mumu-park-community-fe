@@ -1,4 +1,20 @@
 function dropdownSetting() {
+  const profileSection = document.querySelector(".profile-section");
+  const profileDropdown = document.querySelector(".profile-dropdown");
+
+  profileSection.addEventListener("click", function (event) {
+    event.stopPropagation();
+    profileDropdown.style.display =
+      profileDropdown.style.display === "none" ||
+      profileDropdown.style.display === ""
+        ? "block"
+        : "none";
+  });
+
+  document.addEventListener("click", function () {
+    profileDropdown.style.display = "none";
+  });
+
   const dropdownItems = document.querySelectorAll(".dropdown-item");
   dropdownItems.forEach((item) => {
     item.addEventListener("click", function (e) {

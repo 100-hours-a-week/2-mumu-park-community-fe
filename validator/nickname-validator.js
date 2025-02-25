@@ -46,3 +46,24 @@ async function isDuplicateNickname(nickname) {
     return false;
   }
 }
+
+async function checkNicknameDuplicate(nickname) {
+  try {
+    const response = await fetch(`/users/nickname?nickname=${nickname}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.data?.isExist || false;
+  } catch (error) {
+    console.error("Nickname duplicate check failed:", error);
+    return false;
+  }
+}

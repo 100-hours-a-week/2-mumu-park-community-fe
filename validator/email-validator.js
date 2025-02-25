@@ -45,3 +45,24 @@ async function isExist(email) {
     return false;
   }
 }
+
+async function checkEmailDuplicate(email) {
+  try {
+    const response = await fetch(`/users/email?email=${email}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.data?.isExist || false;
+  } catch (error) {
+    console.error("Email duplicate check failed:", error);
+    return false;
+  }
+}

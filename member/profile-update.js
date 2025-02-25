@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   nicknameInput.value = userProfile.nickname;
 
   // 프로필 드롭다운 설정
-  setupProfileDropdown();
+  dropdownSetting();
   // 프로필 이미지 업데이트 설정
   setupProfileImageUpdate();
   // 폼 제출 이벤트 설정
@@ -38,26 +38,6 @@ async function fetchUserProfile() {
     console.error("Error fetching user profile:", error);
     return [];
   }
-}
-
-function setupProfileDropdown() {
-  const profileSection = document.querySelector(".profile-section");
-  const profileDropdown = document.querySelector(".profile-dropdown");
-
-  profileSection.addEventListener("click", function (event) {
-    event.stopPropagation();
-    profileDropdown.style.display =
-      profileDropdown.style.display === "none" ||
-      profileDropdown.style.display === ""
-        ? "block"
-        : "none";
-  });
-
-  document.addEventListener("click", function () {
-    profileDropdown.style.display = "none";
-  });
-
-  dropdownSetting();
 }
 
 function setupProfileImageUpdate() {
@@ -106,12 +86,7 @@ function setupProfileImageUpdate() {
   });
 }
 
-function getCurrentUser() {
-  return { id: 1, nickname: "choons" };
-}
-
 function validateForm() {
-  const previewImg = document.getElementById("previewImg");
   const nicknameInput = document.getElementById("nickname");
   const submitButton = document.querySelector(".update-btn");
 
