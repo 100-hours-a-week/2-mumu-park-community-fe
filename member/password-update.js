@@ -129,6 +129,7 @@ async function changePassword(userId, prevPassword, newPassword) {
     return result;
   } catch (error) {
     console.error("Password Change Failed:", error);
+    alert("Password Change Failed:");
     throw error;
   }
 }

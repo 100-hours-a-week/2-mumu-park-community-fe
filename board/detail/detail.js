@@ -8,21 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
     profileImage.alt = `profileImg`;
   }
 
-  const profileSection = document.querySelector(".profile-section");
-  const profileDropdown = document.querySelector(".profile-dropdown");
-
-  profileSection.addEventListener("click", function (event) {
-    event.stopPropagation();
-    profileDropdown.style.display === "none" ||
-    profileDropdown.style.display === ""
-      ? "block"
-      : "none";
-  });
-
-  document.addEventListener("click", function () {
-    profileDropdown.style.display = "none";
-  });
-
   dropdownSetting();
   loadAndDisplayPost(postId);
   setupCommentSubmission(postId);
@@ -62,7 +47,7 @@ function displayPostContent(post) {
   document.querySelector(".author-info span").textContent = post.authorNickname;
   document.querySelector(".author-info img").src =
     "../../photo/profile_mumu.jpeg";
-  // author?.authorProfileImg || "../photo/profile_mumu.jpeg";
+
   document.querySelector(".date").textContent = formatDate(post.createdAt);
   document.querySelector(".content-text").textContent = post.content;
 
@@ -74,19 +59,16 @@ function displayPostContent(post) {
     postImage.style.display = "block";
     imageContainer.style.display = "flex";
 
-    // 이미지 로드 완료 후 크기 조정
     postImage.onload = function () {
       const ratio = this.naturalWidth / this.naturalHeight;
 
       if (ratio > 1) {
-        // 가로가 더 긴 이미지
         if (this.naturalWidth > 800) {
           imageContainer.style.width = "800px";
         } else {
           imageContainer.style.width = this.naturalWidth + "px";
         }
       } else {
-        // 세로가 더 긴 이미지
         const maxHeight = 600;
         if (this.naturalHeight > maxHeight) {
           imageContainer.style.width = maxHeight * ratio + "px";
@@ -103,11 +85,9 @@ function displayPostContent(post) {
   const statButtons = document.querySelectorAll(".stat-button");
   const likeButton = statButtons[0];
 
-  // 현재 사용자의 좋아요 상태 확인
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const hasLiked = post.likedBy?.includes(currentUser.email);
 
-  // 좋아요 버튼 초기 상태 설정
   likeButton.style.backgroundColor = hasLiked ? "#ACA0EB" : "#D9D9D9";
   likeButton.querySelector("span").textContent = formatNumber(
     post.likedBy.length || 0
@@ -253,11 +233,6 @@ async function setupPostActions(post) {
       // Todo : 추후 서버시 리팩토링
       // showDeleteConfirmDialog(async () => await deletePost(post));
     });
-}
-
-// Todo : 추후 없애야함.
-function getCurrentUser() {
-  return { id: 1, nickname: "choons" };
 }
 
 async function deletePost(postId, userId) {

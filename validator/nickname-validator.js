@@ -43,6 +43,7 @@ async function isDuplicateNickname(nickname) {
     return users.some((user) => user.nickname === nickname);
   } catch (err) {
     console.error("데이터를 가져오는 중 오류 발생:", err);
+    alert("닉네임 중복체크에 실패하였습니다.");
     return false;
   }
 }

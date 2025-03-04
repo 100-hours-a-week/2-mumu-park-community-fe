@@ -36,6 +36,7 @@ async function fetchUserProfile() {
     return data[1];
   } catch (error) {
     console.error("Error fetching user profile:", error);
+    alert("Error fetching user profile");
     return [];
   }
 }

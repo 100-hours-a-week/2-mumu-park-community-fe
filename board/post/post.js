@@ -134,6 +134,7 @@ async function savePost(post) {
     return result;
   } catch (error) {
     console.error("Boards Post failed:", error);
+    alert("Boards Post failed");
     throw error;
   }
 }

@@ -170,10 +170,11 @@ document
       // Todo : 추후 서버 연결시 사용할 코드
       // await signupUser(newUser);
 
-      console.log("회원가입 완료, 로그인 페이지 이동"); // ✅ 디버깅 8
+      console.log("회원가입 완료, 로그인 페이지 이동");
       window.location.href = "sign-in.html?status=ACAOEB";
     } catch (error) {
       console.error("회원가입 처리 중 오류 발생:", error);
+      alert("회원가입 처리 중 오류 발생:", error);
     }
   });
 
@@ -195,6 +196,7 @@ async function signupUser(userData) {
     return result;
   } catch (error) {
     console.error("Signup failed:", error);
+    alert("Signup failed:");
     throw error;
   }
 }

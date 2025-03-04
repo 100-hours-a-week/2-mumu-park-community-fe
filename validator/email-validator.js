@@ -42,6 +42,7 @@ async function isExist(email) {
     return users.some((user) => user.email === email);
   } catch (err) {
     console.error("데이터를 가져오는 중 오류 발생:", err);
+    alert("데이터를 가져오는 중 오류 발생");
     return false;
   }
 }
@@ -63,6 +64,7 @@ async function checkEmailDuplicate(email) {
     return result.data?.isExist || false;
   } catch (error) {
     console.error("Email duplicate check failed:", error);
+    alert("Email duplicate check failed");
     return false;
   }
 }

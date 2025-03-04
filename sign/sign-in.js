@@ -56,6 +56,7 @@ async function requestSignin(signinInfo) {
     return result;
   } catch (error) {
     console.error("Signup failed:", error);
+    alert("Signup failed:");
     throw error;
   }
 }
@@ -73,7 +74,8 @@ async function checkExistUser(email, password) {
       (user) => user.email === email && user.password === password
     );
   } catch (err) {
-    console.error("데이터를 가져오는 중 오류 발생:", err);
+    console.error("존재하는 유저입니다.", err);
+    alert("존재하는 유저입니다.");
     return false;
   }
 }

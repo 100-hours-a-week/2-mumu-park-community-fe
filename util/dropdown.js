@@ -5,10 +5,7 @@ function dropdownSetting() {
   profileSection.addEventListener("click", function (event) {
     event.stopPropagation();
     profileDropdown.style.display =
-      profileDropdown.style.display === "none" ||
-      profileDropdown.style.display === ""
-        ? "block"
-        : "none";
+      profileDropdown.style.display === "block" ? "none" : "block";
   });
 
   document.addEventListener("click", function () {
