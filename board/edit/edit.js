@@ -184,7 +184,7 @@ async function updatePost(post) {
 
 async function fetchPostDetail(postId) {
   try {
-    const response = await fetch(`/boards/{postId}`);
+    const response = await fetch(`http://127.0.0.1:8080/boards/{postId}`);
 
     if (!response.ok) {
       throw new Error("error creating");

@@ -25,23 +25,16 @@ document
       return;
     }
 
-    const isExistUser = await checkExistUser(email, password);
-    if (!isExistUser) {
-      helperText.textContent = "* 아이디 또는 비밀번호를 확인해주세요.";
-      helperText.style.display = "block";
-      return;
-    }
-
-    // Todo : 추후 서버만들고 변경해야할지점
-    // await requestSignin({ email, password });
+    await requestSignin({ email, password });
 
     window.location.href = "../board/main/main.html";
   });
 
 async function requestSignin(signinInfo) {
   try {
-    const response = await fetch("/users/signup", {
+    const response = await fetch("http://localhost:8080/auth/tokens", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -53,30 +46,12 @@ async function requestSignin(signinInfo) {
     }
 
     const result = await response.json();
+    sessionStorage.setItem("accessToken", result.data.accessToken);
     return result;
   } catch (error) {
     console.error("Signup failed:", error);
     alert("Signup failed:");
     throw error;
-  }
-}
-
-async function checkExistUser(email, password) {
-  try {
-    const response = await fetch("../data/member.json");
-
-    if (!response.ok) {
-      throw new Error("error creating");
-    }
-
-    const users = await response.json();
-    return users.some(
-      (user) => user.email === email && user.password === password
-    );
-  } catch (err) {
-    console.error("존재하는 유저입니다.", err);
-    alert("존재하는 유저입니다.");
-    return false;
   }
 }
 

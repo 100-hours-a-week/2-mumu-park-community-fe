@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   const userProfile = await fetchUserProfile();
+  console.log(`userProfile: ${userProfile}`);
 
   const emailElement = document.querySelector(".input-group p");
   emailElement.textContent = userProfile.email;
@@ -25,20 +26,33 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 async function fetchUserProfile() {
   try {
-    // Todo : 추후 서버 api url 변경해야함
-    const response = await fetch("../data/member.json");
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return redirectToLogin();
 
-    if (!response.ok) {
-      throw new Error("error creating");
-    }
+    const response = await fetch("http://127.0.0.1:8080/users", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    const data = await response.json();
-    return data[1];
+    if (!response.ok)
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+
+    const result = await response.json();
+    return result.data;
   } catch (error) {
     console.error("Error fetching user profile:", error);
-    alert("Error fetching user profile");
-    return [];
+    alert("Error fetching user profile: " + error.message);
+    return null;
   }
+}
+
+function redirectToLogin() {
+  alert("로그인이 필요합니다.");
+  window.location.href = "../sign/sign-in.html";
 }
 
 function setupProfileImageUpdate() {

@@ -15,6 +15,7 @@
     postsContainer.innerHTML = "";
 
     const posts = await fetchPosts();
+    console.log(`posts = ${posts}`);
     posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     posts.forEach((post) => {
@@ -52,7 +53,7 @@
     `;
 
     article.addEventListener("click", () => {
-      window.location.href = `../detail/detail.html?id=${post.id}`;
+      window.location.href = `../detail/detail.html?id=${post.boardId}`;
     });
 
     return article;
@@ -60,21 +61,25 @@
 
   async function fetchPosts() {
     try {
-      const response = await fetch("../../data/board.json");
-      // const response = await fetch('/boards');
+      const response = await fetch("http://127.0.0.1:8080/boards");
 
       if (!response.ok) {
         throw new Error("error creating");
       }
 
-      return await response.json();
-      // const result = await response.json(); // JSON 파싱
-      // return result.data;
+      const result = await response.json();
+      console.log("Fetched result:", result); // ✅ 전체 응답 로그 확인
+
+      // ✅ 데이터 구조 확인 후 올바르게 접근
+      const posts = result.data?.boardSimpleInfos || [];
+      console.log("posts:", posts);
+
+      return posts;
     } catch (err) {
       console.error("게시글 가져오는 중 오류 발생:", err);
       alert("게시글 가져오는 중 오류 발생");
 
-      return false;
+      return []; // ❌ false 대신 빈 배열 반환 (forEach 에러 방지)
     }
   }
 })();

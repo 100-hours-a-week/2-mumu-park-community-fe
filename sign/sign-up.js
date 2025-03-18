@@ -164,11 +164,10 @@ document
         email,
         password,
         nickname,
-        profileImage: compressedImage,
+        profileImage: "https://test.s3.img.jpeg",
       };
 
-      // Todo : 추후 서버 연결시 사용할 코드
-      // await signupUser(newUser);
+      await signupUser(newUser);
 
       console.log("회원가입 완료, 로그인 페이지 이동");
       window.location.href = "sign-in.html?status=ACAOEB";
@@ -180,7 +179,7 @@ document
 
 async function signupUser(userData) {
   try {
-    const response = await fetch("/users/signup", {
+    const response = await fetch("http://localhost:8080/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

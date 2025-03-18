@@ -14,27 +14,25 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function loadAndDisplayPost(postId) {
-  const response = await fetch("../../data/board.json");
-  const posts = await response.json();
-  const post = posts.find((p) => p.id === postId);
+  const post = await fetchPostDetail(postId);
 
-  // Todo : 추후 서버 생기면 리팩토링 진행
-  // const post = await fetchPostDetail(postId);
-
-  displayPostContent(post);
-  displayComments(post);
+  console.log(`post : ${JSON.stringify(post)}`);
+  displayPostContent(post.boardDetail);
+  displayComments(post.comments);
   await setupPostActions(post);
 }
 
 async function fetchPostDetail(postId) {
   try {
-    const response = await fetch(`/boards/${postId}`);
+    const response = await fetch(`http://127.0.0.1:8080/boards/${postId}`);
 
     if (!response.ok) {
       throw new Error("error creating");
     }
 
     const result = await response.json();
+    console.log(`result : ${JSON.stringify(result)}`);
+    console.log(`result : ${result.data.boardDetail.boardId}`);
     return result.data;
   } catch (err) {
     console.error("게시글 가져오는 중 오류 발생:", err);
@@ -85,16 +83,12 @@ function displayPostContent(post) {
   const statButtons = document.querySelectorAll(".stat-button");
   const likeButton = statButtons[0];
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  const hasLiked = post.likedBy?.includes(currentUser.email);
-
-  likeButton.style.backgroundColor = hasLiked ? "#ACA0EB" : "#D9D9D9";
-  likeButton.querySelector("span").textContent = formatNumber(
-    post.likedBy.length || 0
-  );
+  // likeButton.style.backgroundColor = hasLiked ? "#ACA0EB" : "#D9D9D9";
+  likeButton.style.backgroundColor = "#ACA0EB";
+  likeButton.querySelector("span").textContent = formatNumber(post.likeCnt);
 
   statButtons[1].querySelector("span").textContent = formatNumber(
-    post.viewCnt || 0
+    post.viewCount || 0
   );
   statButtons[2].querySelector("span").textContent = formatNumber(
     post.comments?.length || 0
@@ -103,11 +97,12 @@ function displayPostContent(post) {
   likeButton.addEventListener("click", () => toggleLike(post));
 }
 
-function displayComments(post) {
+function displayComments(comments) {
   const commentList = document.querySelector(".comment-list");
   commentList.innerHTML = "";
 
-  post.comments?.forEach((comment) => {
+  console.log(comments[0]);
+  comments?.forEach((comment) => {
     const commentElement = createCommentElement(comment);
     commentList.appendChild(commentElement);
   });
@@ -121,10 +116,8 @@ function createCommentElement(comment) {
     <div class="comment-container">
       <div class="comment-left">
         <img src="../../photo/profile_mumu.jpeg" alt="commenter" class="commenter-image">
-        <span class="commenter-name"><strong>${
-          comment.authorNickname
-        }</strong></span>
-        <span class="comment-date">${formatDate(comment.createdAt)}</span>
+        <span class="commenter-name"><strong>${comment.nickname}</strong></span>
+        <span class="comment-date">${formatDate(comment.updatedAt)}</span>
       </div>
       <div class="comment-right">
         <button class="action-btn edit-comment" data-id="${comment.id}">
@@ -146,10 +139,9 @@ function createCommentElement(comment) {
     showDeleteConfirmDialog(() => location.reload());
   });
 
-  // Todo : 서버 사용시 생성
-  // commentDiv.querySelector(".delete-comment").addEventListener("click", () => {
-  //   showDeleteConfirmDialog(() => deleteComment(comment));
-  // });
+  commentDiv.querySelector(".delete-comment").addEventListener("click", () => {
+    showDeleteConfirmDialog(() => deleteComment(comment));
+  });
 
   return commentDiv;
 }
@@ -157,16 +149,17 @@ function createCommentElement(comment) {
 async function deleteComment(commentId) {
   const urlParams = new URLSearchParams(window.location.search);
   const postId = urlParams.get("id"); // 현재 게시글 ID 가져오기
-  const user = getCurrentUser(); // Todo : 현재 로그인한 사용자 ID 가져오기,
 
   try {
-    const response = await fetch(`/boards/${postId}/comments/${commentId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      // body: JSON.stringify({ user.userId }),
-    });
+    const response = await fetch(
+      `http://127.0.0.1:8080/boards/${postId}/comments/${commentId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("댓글 삭제 실패");
@@ -209,7 +202,6 @@ function showDeleteConfirmDialog(callback) {
 }
 
 async function setupPostActions(post) {
-  const currentUser = getCurrentUser();
   const actionButtons = document.querySelector(".post-actions");
 
   // Todo : 추후 서버시 사용
@@ -231,18 +223,17 @@ async function setupPostActions(post) {
         () => (window.location.href = "../main/main.html")
       );
       // Todo : 추후 서버시 리팩토링
-      // showDeleteConfirmDialog(async () => await deletePost(post));
+      showDeleteConfirmDialog(async () => await deletePost(post));
     });
 }
 
-async function deletePost(postId, userId) {
+async function deletePost(postId) {
   try {
-    const response = await fetch(`/boards/${postId}`, {
+    const response = await fetch(`http://127.0.0.1:8080/boards/${postId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId }),
     });
 
     if (!response.ok) {
@@ -258,23 +249,26 @@ async function deletePost(postId, userId) {
 }
 
 async function toggleLike(post) {
-  const { userId } = getCurrentUser();
-
   try {
-    const response = await fetch(`/boards/${post.postId}`);
+    const response = await fetch(
+      `http://127.0.0.1:8080/boards/${post.boardId}`
+    );
     if (!response.ok) {
       throw new Error("게시글 정보를 불러올 수 없습니다.");
     }
 
     const isLikeCancel = post.likedBy.includes(userId); // true면 좋아요 취소
 
-    const patchResponse = await fetch(`/boards/${postId}/likes`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId, isLikeCancel }),
-    });
+    const patchResponse = await fetch(
+      `http://127.0.0.1:8080/boards/${post.boardId}/likes`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(isLikeCancel),
+      }
+    );
 
     if (!patchResponse.ok) {
       throw new Error("좋아요 반영 실패");
@@ -318,14 +312,12 @@ function setupCommentSubmission(postId) {
     const content = textarea.value.trim();
     if (!content) return;
 
-    const { userId } = getCurrentUser();
-
     try {
       if (editingCommentId) {
-        await editCommentRequest(postId, editingCommentId, userId, content);
+        await editCommentRequest(postId, editingCommentId, content);
         editingCommentId = null;
       } else {
-        await addCommentRequest(postId, userId, content);
+        await addCommentRequest(postId, content);
       }
 
       textarea.value = "";
@@ -350,13 +342,13 @@ function setupCommentSubmission(postId) {
   };
 }
 
-async function editCommentRequest(postId, commentId, userId, content) {
+async function editCommentRequest(postId, commentId, content) {
   const response = await fetch(`/boards/${postId}/comments/${commentId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, content }),
+    body: JSON.stringify(content),
   });
 
   if (!response.ok) {
@@ -364,13 +356,13 @@ async function editCommentRequest(postId, commentId, userId, content) {
   }
 }
 
-async function addCommentRequest(postId, userId, content) {
+async function addCommentRequest(postId, content) {
   const response = await fetch(`/boards/${postId}/comments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId, content }),
+    body: JSON.stringify(content),
   });
 
   if (!response.ok) {
