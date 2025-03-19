@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   const userProfile = await fetchUserProfile();
-  console.log(`userProfile: ${userProfile}`);
 
   const emailElement = document.querySelector(".input-group p");
   emailElement.textContent = userProfile.email;
@@ -44,7 +43,6 @@ async function fetchUserProfile() {
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error("Error fetching user profile:", error);
     alert("Error fetching user profile: " + error.message);
     return null;
   }
@@ -85,7 +83,7 @@ function setupProfileImageUpdate() {
         imagePreview.style.backgroundColor = "transparent";
         if (helperText) helperText.style.display = "none";
       } catch (error) {
-        console.error("이미지 압축 중 오류 발생:", error);
+        alert("이미지 압축 중 오류 발생:", error);
       }
     } else {
       previewImg.style.display = "none";
@@ -147,13 +145,14 @@ function setupFormSubmission() {
 }
 
 async function updateProfile(updateData) {
-  const { userId } = getCurrentUser();
+  const token = sessionStorage.getItem("accessToken");
 
   try {
-    const response = await fetch(`/users/${userId}`, {
+    const response = await fetch(`http://127.0.0.1:8080/users`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updateData),
     });
@@ -165,9 +164,8 @@ async function updateProfile(updateData) {
     showToast("수정이 완료되었습니다.");
     setTimeout(() => {
       window.location.href = "../board/main/main.html";
-    }, 3000);
+    }, 2000);
   } catch (error) {
-    console.error("프로필 수정 중 오류 발생:", error);
     alert("프로필 수정에 실패했습니다.");
   }
 }
@@ -206,10 +204,15 @@ function setupWithdrawal() {
   withdrawalBtn.addEventListener("click", function () {
     showWithdrawlConfirmDialog(async () => {
       const { userId } = getCurrentUser();
+      const token = sessionStorage.getItem("accessToken");
 
       try {
         const response = await fetch(`/users/${userId}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response.ok) {
@@ -218,7 +221,6 @@ function setupWithdrawal() {
 
         window.location.href = "../sign/sign-in.html";
       } catch (error) {
-        console.error("회원 탈퇴 중 오류 발생:", error);
         alert("회원 탈퇴에 실패했습니다.");
       }
     });

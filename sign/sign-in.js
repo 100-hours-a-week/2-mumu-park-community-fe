@@ -49,7 +49,6 @@ async function requestSignin(signinInfo) {
     sessionStorage.setItem("accessToken", result.data.accessToken);
     return result;
   } catch (error) {
-    console.error("Signup failed:", error);
     alert("Signup failed:");
     throw error;
   }

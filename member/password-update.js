@@ -108,15 +108,17 @@ function setupPasswordUpdate() {
   });
 }
 
-async function changePassword(userId, prevPassword, newPassword) {
+async function changePassword(newPassword) {
   try {
-    const response = await fetch(`/users/${userId}/password`, {
-      method: "POST",
+    const token = sessionStorage.getItem("accessToken");
+
+    const response = await fetch(`http://localhost:8080/users/password`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        prevPassword: prevPassword,
         newPassword: newPassword,
       }),
     });
@@ -125,8 +127,10 @@ async function changePassword(userId, prevPassword, newPassword) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result;
+    showToast("비밀번호 수정이 완료되었습니다.");
+    setTimeout(() => {
+      window.location.href = "../board/main/main.html";
+    }, 2000);
   } catch (error) {
     console.error("Password Change Failed:", error);
     alert("Password Change Failed:");

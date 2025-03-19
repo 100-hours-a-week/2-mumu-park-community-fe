@@ -35,17 +35,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 async function loadPostData(postId) {
-  const response = await fetch("../../data/board.json");
-  const posts = await response.json();
-  const post = posts.find((p) => p.id === postId);
+  const post = await fetchPostDetail(postId);
 
-  // Todo : 추후 서버생기면 게시글 상세정보 가져오기
-  // const postData = await fetchPostDetail(postId);
+  document.getElementById("title").value = post.boardDetail.title;
+  document.getElementById("content").value = post.boardDetail.content;
 
-  document.getElementById("title").value = post.title;
-  document.getElementById("content").value = post.content;
-
-  if (post.imageUrl && post.imgFileName) {
+  if (post.boardDetail.imageUrl && post.boardDetail.imgFileName) {
     const byteString = atob(post.imageUrl.split(",")[1]);
     const mimeString = post.imageUrl.split(",")[0].split(":")[1].split(";")[0];
     const ab = new ArrayBuffer(byteString.length);
@@ -62,6 +57,22 @@ async function loadPostData(postId) {
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(file);
     document.getElementById("image").files = dataTransfer.files;
+  }
+}
+
+async function fetchPostDetail(postId) {
+  try {
+    const response = await fetch(`http://127.0.0.1:8080/boards/${postId}`);
+
+    if (!response.ok) {
+      throw new Error("error creating");
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (err) {
+    console.error("게시글 가져오는 중 오류 발생:", err);
+    return false;
   }
 }
 
@@ -138,9 +149,7 @@ function setupForm(postId) {
       }
     }
 
-    // Todo : 추후 서버 생기면 리팩토링
-    // await updatePost({ userId, postId, title, content, imageUrl, imageFileName });
-
+    await updatePost({ postId, title, content, imageUrl, imageFileName });
     window.location.href = `../detail/detail.html?id=${postId}`;
   });
 
@@ -162,38 +171,25 @@ function setupForm(postId) {
 
 async function updatePost(post) {
   try {
-    const response = await fetch(`/boards/${post.postId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(post),
-    });
+    const token = sessionStorage.getItem("accessToken");
+
+    const response = await fetch(
+      `http://127.0.0.1:8080/boards/${post.postId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(post),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    const result = await response.json();
-    return result;
   } catch (error) {
     console.error("Update Post failed:", error);
     throw error;
-  }
-}
-
-async function fetchPostDetail(postId) {
-  try {
-    const response = await fetch(`http://127.0.0.1:8080/boards/{postId}`);
-
-    if (!response.ok) {
-      throw new Error("error creating");
-    }
-
-    const result = await response.json();
-    return result.data;
-  } catch (err) {
-    console.error("게시글 가져오는 중 오류 발생:", err);
-    return false;
   }
 }

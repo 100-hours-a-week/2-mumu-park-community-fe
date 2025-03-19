@@ -92,23 +92,15 @@ async function handleSubmit(e) {
     }
   }
 
-  // Todo : 서버 생기고 어떻게 유저의 정보를 추출할지 생각해야함
-  const newPost = createPostObject(
-    // userId
-    title,
-    content,
-    imageUrl,
-    imageFileName
-  );
+  const newPost = createPostObject(title, content, imageUrl, imageFileName);
 
-  // Todo : 추후 서버 생기면 리팩토링 진행
-  // savePost(newPost);
+  await savePost(newPost);
+
   window.location.href = "../main/main.html";
 }
 
-function createPostObject(userId, title, content, imageUrl, imageFileName) {
+function createPostObject(title, content, imageUrl, imageFileName) {
   return {
-    userId,
     title,
     content,
     imageUrl,
@@ -117,12 +109,16 @@ function createPostObject(userId, title, content, imageUrl, imageFileName) {
 }
 
 async function savePost(post) {
+  const token = sessionStorage.getItem("accessToken");
+  console.log(`accessToken: ${token})`);
   try {
-    const response = await fetch("/boards", {
+    const response = await fetch("http://127.0.0.1:8080/boards", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
+
       body: JSON.stringify(post),
     });
 

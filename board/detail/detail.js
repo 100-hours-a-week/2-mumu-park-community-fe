@@ -16,10 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
 async function loadAndDisplayPost(postId) {
   const post = await fetchPostDetail(postId);
 
-  console.log(`post : ${JSON.stringify(post)}`);
   displayPostContent(post.boardDetail);
   displayComments(post.comments);
-  await setupPostActions(post);
+  await setupPostActions(post.boardDetail);
 }
 
 async function fetchPostDetail(postId) {
@@ -31,11 +30,9 @@ async function fetchPostDetail(postId) {
     }
 
     const result = await response.json();
-    console.log(`result : ${JSON.stringify(result)}`);
-    console.log(`result : ${result.data.boardDetail.boardId}`);
     return result.data;
   } catch (err) {
-    console.error("게시글 가져오는 중 오류 발생:", err);
+    alert("게시글 가져오는 중 오류 발생:", err);
     return false;
   }
 }
@@ -101,7 +98,6 @@ function displayComments(comments) {
   const commentList = document.querySelector(".comment-list");
   commentList.innerHTML = "";
 
-  console.log(comments[0]);
   comments?.forEach((comment) => {
     const commentElement = createCommentElement(comment);
     commentList.appendChild(commentElement);
@@ -204,16 +200,10 @@ function showDeleteConfirmDialog(callback) {
 async function setupPostActions(post) {
   const actionButtons = document.querySelector(".post-actions");
 
-  // Todo : 추후 서버시 사용
-  // if (post.authorEmail !== currentUser.email) {
-  //   actionButtons.style.display = "none";
-  //   return;
-  // }
-
   actionButtons
     .querySelector("button:first-child")
     .addEventListener("click", () => {
-      window.location.href = `../edit/edit.html?id=${post.id}`;
+      window.location.href = `../edit/edit.html?id=${post.boardId}`;
     });
 
   actionButtons
@@ -222,17 +212,19 @@ async function setupPostActions(post) {
       showDeleteConfirmDialog(
         () => (window.location.href = "../main/main.html")
       );
-      // Todo : 추후 서버시 리팩토링
-      showDeleteConfirmDialog(async () => await deletePost(post));
+      showDeleteConfirmDialog(async () => await deletePost(post.boardId));
     });
 }
 
 async function deletePost(postId) {
   try {
+    const token = sessionStorage.getItem("accessToken");
+
     const response = await fetch(`http://127.0.0.1:8080/boards/${postId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -343,7 +335,7 @@ function setupCommentSubmission(postId) {
 }
 
 async function editCommentRequest(postId, commentId, content) {
-  const response = await fetch(`/boards/${postId}/comments/${commentId}`, {
+  const response = await fetch(`/boards/comments/${commentId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

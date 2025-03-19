@@ -14,7 +14,7 @@ function dropdownSetting() {
 
   const dropdownItems = document.querySelectorAll(".dropdown-item");
   dropdownItems.forEach((item) => {
-    item.addEventListener("click", function (e) {
+    item.addEventListener("click", async function (e) {
       e.stopPropagation();
       const text = e.target.textContent;
       switch (text) {
@@ -25,9 +25,32 @@ function dropdownSetting() {
           window.location.href = "../profile/change-password.html";
           break;
         case "로그아웃":
+          await logout();
+          alert("로그아웃 되었습니다.");
           window.location.href = "../../sign/sign-in.html";
           break;
       }
     });
   });
+}
+
+async function logout() {
+  try {
+    const token = sessionStorage.getItem("accessToken");
+
+    const response = await fetch(`http://127.0.0.1:8080/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Update Post failed:", error);
+    throw error;
+  }
 }
