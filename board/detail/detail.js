@@ -19,6 +19,69 @@ async function loadAndDisplayPost(postId) {
   displayPostContent(post.boardDetail);
   displayComments(post.comments);
   await setupPostActions(post.boardDetail);
+
+  // 로그인한 사용자의 좋아요 상태 확인 및 버튼 설정
+  const token = sessionStorage.getItem("accessToken");
+  if (token) {
+    updateLikeButtonState(post.boardDetail.boardId);
+  }
+}
+
+async function updateLikeButtonState(postId) {
+  try {
+    const isLiked = await isBoardLikes(postId);
+    const likeButton = document.querySelectorAll(".stat-button")[0];
+
+    // 좋아요 상태에 따라 버튼 색상 변경
+    likeButton.style.backgroundColor = isLiked ? "#ACA0EB" : "#D9D9D9";
+  } catch (error) {
+    console.error("좋아요 상태 업데이트 중 오류 발생:", error);
+  }
+}
+
+async function toggleLike(post) {
+  try {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+
+    // 현재 좋아요 상태 확인
+    const isLiked = await isBoardLikes(post.boardId);
+
+    // 좋아요 토글 요청
+    const response = await fetch(
+      `http://127.0.0.1:8080/boards/${post.boardId}/likes`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          isLikeCancel: isLiked, // true면 좋아요 취소, false면 좋아요 등록
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("좋아요 처리 실패");
+    }
+
+    // 좋아요 상태 및 버튼 업데이트
+    await updateLikeButtonState(post.boardId);
+
+    // 좋아요 수 업데이트
+    const updatedPost = await fetchPostDetail(post.boardId);
+    const likeButton = document.querySelectorAll(".stat-button")[0];
+    likeButton.querySelector("span").textContent = formatNumber(
+      updatedPost.boardDetail.likeCnt
+    );
+  } catch (error) {
+    console.error("좋아요 처리 중 오류 발생:", error);
+    alert("좋아요 처리에 실패했습니다.");
+  }
 }
 
 async function fetchPostDetail(postId) {
@@ -245,41 +308,6 @@ async function deletePost(postId) {
   }
 }
 
-async function toggleLike(post) {
-  try {
-    const response = await fetch(
-      `http://127.0.0.1:8080/boards/${post.boardId}`
-    );
-    if (!response.ok) {
-      throw new Error("게시글 정보를 불러올 수 없습니다.");
-    }
-
-    const isLikeCancel = post.likedBy.includes(userId); // true면 좋아요 취소
-
-    const patchResponse = await fetch(
-      `http://127.0.0.1:8080/boards/${post.boardId}/likes`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(isLikeCancel),
-      }
-    );
-
-    if (!patchResponse.ok) {
-      throw new Error("좋아요 반영 실패");
-    }
-
-    const updatedPost = await patchResponse.json();
-
-    updateLikeButton(updatedPost, userId);
-  } catch (error) {
-    console.error("좋아요 처리 중 오류 발생:", error);
-    alert("좋아요 처리에 실패했습니다.");
-  }
-}
-
 function updateLikeButton(post, userId) {
   const likeButton = document.querySelectorAll(".stat-button")[0];
   const hasLiked = post.likedBy.includes(userId);
@@ -312,12 +340,9 @@ function setupCommentSubmission(postId) {
 
     try {
       if (editingCommentId) {
-        console.log(`댓글 수정 시작 : ${editingCommentId}`);
         await editCommentRequest(editingCommentId, content);
         editingCommentId = null;
       } else {
-        console.log("댓글 생성시작");
-
         await addCommentRequest(postId, content);
       }
 
@@ -334,7 +359,6 @@ function setupCommentSubmission(postId) {
   });
 
   window.editComment = function (comment) {
-    console.log(`Comment object : ${comment}`);
     textarea.value = comment.content;
     editingCommentId = comment.commentId;
     textarea.focus();
@@ -360,7 +384,6 @@ async function editCommentRequest(commentId, content) {
       }),
     }
   );
-  console.log(`response : ${response}`);
 
   if (!response.ok) {
     throw new Error("댓글 수정 실패");
@@ -383,9 +406,30 @@ async function addCommentRequest(postId, content) {
       }),
     }
   );
-  console.log(response);
 
   if (!response.ok) {
     throw new Error("댓글 등록 실패");
+  }
+}
+
+async function isBoardLikes(postId) {
+  const token = sessionStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:8080/boards/${postId}/likes`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await response.json();
+    return result.data.isLike;
+  } catch (err) {
+    alert("좋아요 여부 조회 실패");
   }
 }

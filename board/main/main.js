@@ -15,7 +15,6 @@
     postsContainer.innerHTML = "";
 
     const posts = await fetchPosts();
-    console.log(`posts = ${posts}`);
     posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     posts.forEach((post) => {
@@ -68,11 +67,9 @@
       }
 
       const result = await response.json();
-      console.log("Fetched result:", result); // ✅ 전체 응답 로그 확인
 
       // ✅ 데이터 구조 확인 후 올바르게 접근
       const posts = result.data?.boardSimpleInfos || [];
-      console.log("posts:", posts);
 
       return posts;
     } catch (err) {
