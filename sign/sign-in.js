@@ -7,11 +7,11 @@ document
   .addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const email = document.getElementById("email").value;
+    const username = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const helperText = document.querySelector(".helper-text");
 
-    if (!isValidEmailFormat(email)) {
+    if (!isValidEmailFormat(username)) {
       helperText.textContent =
         "* 올바른 이메일 주소를 입력해주세요. (예: example@example.com)";
       helperText.style.display = "block";
@@ -25,13 +25,14 @@ document
       return;
     }
 
-    await requestSignin({ email, password });
+    await requestSignin({ username, password });
 
     window.location.href = "../board/main/main.html";
   });
 
 async function requestSignin(signinInfo) {
   try {
+    console.log(signinInfo);
     const response = await fetch("http://localhost:8080/auth/tokens", {
       method: "POST",
       credentials: "include",

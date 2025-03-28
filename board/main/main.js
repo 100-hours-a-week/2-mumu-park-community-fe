@@ -32,9 +32,9 @@
         <h2>${post.title}</h2>
         <div class="post-meta">
             <div class="post-meta-left">
-                <span>좋아요 ${formatNumber(post.likes || 0)}</span>
-                <span>댓글 ${formatNumber(post.comments?.length || 0)}</span>
-                <span>조회수 ${formatNumber(post.views || 0)}</span>
+                <span>좋아요 ${formatNumber(post.likeCnt || 0)}</span>
+                <span>댓글 ${formatNumber(post.commentCnt || 0)}</span>
+                <span>조회수 ${formatNumber(post.viewCount || 0)}</span>
             </div>
             <span class="post-date">${formatDate(post.createdAt)}</span>
         </div>

@@ -88,7 +88,7 @@ function displayPostContent(post) {
     post.viewCount || 0
   );
   statButtons[2].querySelector("span").textContent = formatNumber(
-    post.comments?.length || 0
+    post.commentCnt || 0
   );
 
   likeButton.addEventListener("click", () => toggleLike(post));
@@ -116,10 +116,12 @@ function createCommentElement(comment) {
         <span class="comment-date">${formatDate(comment.updatedAt)}</span>
       </div>
       <div class="comment-right">
-        <button class="action-btn edit-comment" data-id="${comment.id}">
+        <button class="action-btn edit-comment" data-id="${comment.commentId}">
           수정
         </button>
-        <button class="action-btn delete-comment" data-id="${comment.id}">
+        <button class="action-btn delete-comment" data-id="${
+          comment.commentId
+        }">
           삭제
         </button>
       </div>
@@ -136,23 +138,26 @@ function createCommentElement(comment) {
   });
 
   commentDiv.querySelector(".delete-comment").addEventListener("click", () => {
-    showDeleteConfirmDialog(() => deleteComment(comment));
+    showDeleteConfirmDialog(() => deleteComment(comment.commentId));
   });
 
   return commentDiv;
 }
 
 async function deleteComment(commentId) {
+  const token = sessionStorage.getItem("accessToken");
+
   const urlParams = new URLSearchParams(window.location.search);
   const postId = urlParams.get("id"); // 현재 게시글 ID 가져오기
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:8080/boards/${postId}/comments/${commentId}`,
+      `http://127.0.0.1:8080/boards/comments/${commentId}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -289,6 +294,7 @@ function setupCommentSubmission(postId) {
   const commentForm = document.querySelector(".comment-input-container");
   const textarea = commentForm.querySelector("textarea");
   const submitButton = commentForm.querySelector(".comment-submit");
+  // const Button = commentForm.querySelector(".delete-action-btn");
   let editingCommentId = null;
 
   submitButton.style.backgroundColor = "#d9d9d9";
@@ -306,9 +312,12 @@ function setupCommentSubmission(postId) {
 
     try {
       if (editingCommentId) {
-        await editCommentRequest(postId, editingCommentId, content);
+        console.log(`댓글 수정 시작 : ${editingCommentId}`);
+        await editCommentRequest(editingCommentId, content);
         editingCommentId = null;
       } else {
+        console.log("댓글 생성시작");
+
         await addCommentRequest(postId, content);
       }
 
@@ -325,8 +334,9 @@ function setupCommentSubmission(postId) {
   });
 
   window.editComment = function (comment) {
+    console.log(`Comment object : ${comment}`);
     textarea.value = comment.content;
-    editingCommentId = comment.id;
+    editingCommentId = comment.commentId;
     textarea.focus();
     submitButton.textContent = "댓글 수정";
     submitButton.style.backgroundColor = "#7f6aee";
@@ -334,14 +344,23 @@ function setupCommentSubmission(postId) {
   };
 }
 
-async function editCommentRequest(postId, commentId, content) {
-  const response = await fetch(`/boards/comments/${commentId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(content),
-  });
+async function editCommentRequest(commentId, content) {
+  const token = sessionStorage.getItem("accessToken");
+  const response = await fetch(
+    `http://127.0.0.1:8080/boards/comments/${commentId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+
+      body: JSON.stringify({
+        content: content,
+      }),
+    }
+  );
+  console.log(`response : ${response}`);
 
   if (!response.ok) {
     throw new Error("댓글 수정 실패");
@@ -349,13 +368,22 @@ async function editCommentRequest(postId, commentId, content) {
 }
 
 async function addCommentRequest(postId, content) {
-  const response = await fetch(`/boards/${postId}/comments`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(content),
-  });
+  const token = sessionStorage.getItem("accessToken");
+
+  const response = await fetch(
+    `http://127.0.0.1:8080/boards/${postId}/comments`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        content: content,
+      }),
+    }
+  );
+  console.log(response);
 
   if (!response.ok) {
     throw new Error("댓글 등록 실패");

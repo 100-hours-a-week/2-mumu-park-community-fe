@@ -121,7 +121,8 @@ function validateForm() {
 }
 
 function setupFormSubmission() {
-  const form = document.getElementById("signupForm");
+  // const form = document.getElementById("signupForm");
+  const form = document.getElementById("update-btn");
   const nicknameInput = document.getElementById("nickname");
 
   validateForm();
@@ -135,6 +136,7 @@ function setupFormSubmission() {
     e.preventDefault();
 
     const nickname = nicknameInput.value;
+    console.log(`nickname: ${nickname}`);
     if (validateForm()) {
       updateProfile({
         nickname: nickname,
