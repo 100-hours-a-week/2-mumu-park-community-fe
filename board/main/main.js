@@ -1,8 +1,10 @@
 (function () {
   document.addEventListener("DOMContentLoaded", async function () {
     const profileImage = document.querySelector(".profile-image img");
+
+    const userInfo = await getUserInfo();
     if (profileImage) {
-      profileImage.src = "../../photo/profile_mumu.jpeg";
+      profileImage.src = userInfo.profileImg;
       profileImage.alt = `profileImg`;
     }
 
@@ -39,9 +41,7 @@
         </div>
         <div class="user-info">
             <div class="avatar">
-                <img src="${
-                  post.profileImage || "../../photo/profile_mumu.jpeg"
-                }" 
+                <img src="${post.authorProfileImg}" 
                   alt="author profile" 
                   style="width: 30px; height: 30px; border-radius: 50%;">
             </div>

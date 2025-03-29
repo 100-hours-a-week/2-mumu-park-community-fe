@@ -4,10 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
   setupForm();
 });
 
-function setupProfile() {
+async function setupProfile() {
   const profileImage = document.querySelector(".profile-image img");
+  const userInfo = await getUserInfo();
   if (profileImage) {
-    profileImage.src = "../../photo/profile_mumu.jpeg";
+    profileImage.src = userInfo.profileImg;
     profileImage.alt = `profileImg`;
   }
 }

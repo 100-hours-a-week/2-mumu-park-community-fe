@@ -1,7 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const profileImage = document.querySelector(".profile-image img");
+  const userInfo = await getUserInfo();
+
   if (profileImage) {
-    profileImage.src = "../../photo/profile_mumu.jpeg";
+    profileImage.src = userInfo.profileImg;
     profileImage.alt = `profileImg`;
   }
 

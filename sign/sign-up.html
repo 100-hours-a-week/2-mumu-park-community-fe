@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원가입</title>
     <link rel="stylesheet" href="sign-up.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-storage-compat.js"></script>
   </head>
   <body>
     <header>
@@ -88,11 +90,15 @@
       </button>
     </div>
 
+    <image
+      src="https://firebasestorage.googleapis.com/v0/b/community-image-e6898.appspot.com/o/KakaoTalk_Photo_2025-03-24-11-20-39.jpeg"
+    />
+
     <script src="sign-up.js"></script>
     <script src="../validator/password-validator.js"></script>
     <script src="../validator/email-validator.js"></script>
     <script src="../validator/image-validator.js"></script>
     <script src="../validator/nickname-validator.js"></script>
-    <script src="../util/image-compressor.js"></script>
+    <script src="../util/image.js"></script>
   </body>
 </html>

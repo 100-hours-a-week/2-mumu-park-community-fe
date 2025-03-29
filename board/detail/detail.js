@@ -1,10 +1,12 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const urlParams = new URLSearchParams(window.location.search);
+  const profileImage = document.querySelector(".profile-image img");
   const postId = urlParams.get("id");
 
-  const profileImage = document.querySelector(".profile-image img");
+  const userInfo = await getUserInfo();
+
   if (profileImage) {
-    profileImage.src = "../../photo/profile_mumu.jpeg";
+    profileImage.src = userInfo.profileImg;
     profileImage.alt = `profileImg`;
   }
 
@@ -15,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function loadAndDisplayPost(postId) {
   const post = await fetchPostDetail(postId);
-
+  console.log(`post: ${post}`);
   displayPostContent(post.boardDetail);
   displayComments(post.comments);
   await setupPostActions(post.boardDetail);
@@ -103,8 +105,7 @@ async function fetchPostDetail(postId) {
 function displayPostContent(post) {
   document.querySelector("h2").textContent = post.title;
   document.querySelector(".author-info span").textContent = post.authorNickname;
-  document.querySelector(".author-info img").src =
-    "../../photo/profile_mumu.jpeg";
+  document.querySelector(".author-info img").src = post.authorProfileImg;
 
   document.querySelector(".date").textContent = formatDate(post.createdAt);
   document.querySelector(".content-text").textContent = post.content;
@@ -174,7 +175,9 @@ function createCommentElement(comment) {
   commentDiv.innerHTML = `
     <div class="comment-container">
       <div class="comment-left">
-        <img src="../../photo/profile_mumu.jpeg" alt="commenter" class="commenter-image">
+        <img src="${
+          comment.profileImg
+        }" alt="commenter" class="commenter-image">
         <span class="commenter-name"><strong>${comment.nickname}</strong></span>
         <span class="comment-date">${formatDate(comment.updatedAt)}</span>
       </div>

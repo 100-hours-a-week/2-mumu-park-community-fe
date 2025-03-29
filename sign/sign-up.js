@@ -158,13 +158,15 @@ document
     }
 
     try {
-      const compressedImage = await compressImage(profileImage);
+      // Firebase Storage에 이미지 업로드 - image.js에서 가져온 함수 사용
+      console.log(profileImage);
+      const imageUrl = await uploadImage(profileImage);
 
       const newUser = {
         email,
         password,
         nickname,
-        profileImage: "https://test.s3.img.jpeg",
+        profileImage: imageUrl, // Firebase에서 받은 URL 사용
       };
 
       await signupUser(newUser);
@@ -176,6 +178,15 @@ document
       alert("회원가입 처리 중 오류 발생:", error);
     }
   });
+
+// 프로필 이미지 유효성 검사 함수 추가
+function validateProfileImage() {
+  const profileImage = document.getElementById("profile-imag").files[0];
+  if (!profileImage) {
+    return "* 프로필 사진을 추가해주세요.";
+  }
+  return "";
+}
 
 async function signupUser(userData) {
   try {
